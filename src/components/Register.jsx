@@ -1,78 +1,99 @@
-import React from "react";
+import React, { useState } from 'react';
+import { Input, Button, message } from 'antd';
 
-function Register() {
-  return (
-    <div>
-      <div className="register">
-        <form>
-          <div className="mb-3">
-            <label for="userName" className="form-label">
-              Name
-            </label>
-            <input
-              type="text"
-              className="form-control mb-3"
-              id="userName"
-              aria-describedby="userName"
+export default function AddItem() {
+    const { TextArea } = Input;
+    const [item, setItem] = useState({
+        title: '',
+        price: '',
+        description: '',
+        category: '',
+        image: '',
+        rating_rate: '',
+        rating_count: '',
+    });
+
+    const handleInputChange = (field, value) => {
+        setItem({ ...item, [field]: value });
+    };
+
+    const handleAddItem = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/api/add-item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(item),
+            });
+            setItem({
+                title: '',
+                price: '',
+                description: '',
+                category: '',
+                image: '',
+                rating_rate: '',
+                rating_count: '',
+            })
+
+            if (response.ok) {
+                message.success('Item added successfully');
+            } else {
+                message.error('Failed to add item');
+            }
+        } catch (error) {
+            console.error('Error adding item:', error);
+            message.error('Internal Server Error');
+        }
+    };
+
+    return (
+        <div style={{ width: '300px', margin: 'auto', marginTop: '20px' }}>
+            <TextArea
+                placeholder="Title"
+                value={item.title}
+                onChange={(e) => handleInputChange('title', e.target.value)}
+                style={{ marginBottom: '10px', width: '100%' }}
             />
-            <label for="phone" className="form-label">
-              Contact No.
-            </label>
-            <input
-              type="tel"
-              className="form-control mb-3"
-              id="phone"
-              aria-describedby="phone"
+            <TextArea
+                placeholder="Description"
+                value={item.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                style={{ marginBottom: '10px', width: '100%' }}
             />
-            <label for="exampleInputEmail1" className="form-label">
-              Email address
-            </label>
-            <input
-              type="email"
-              className="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
+            <TextArea
+                placeholder="Price"
+                value={item.price}
+                onChange={(e) => handleInputChange('price', e.target.value)}
+                style={{ marginBottom: '10px', width: '100%' }}
             />
-            <div id="emailHelp" className="form-text">
-              We'll never share your email with anyone else.
-            </div>
-          </div>
-          <div className="mb-3">
-            <label for="exampleInputPassword1" className="form-label">
-              Password
-            </label>
-            <input
-              type="password"
-              className="form-control mb-3"
-              id="exampleInputPassword1"
+            <TextArea
+                placeholder="Category"
+                value={item.category}
+                onChange={(e) => handleInputChange('category', e.target.value)}
+                style={{ marginBottom: '10px', width: '100%' }}
             />
-            <label for="exampleConfirmtPassword1" className="form-label">
-              Confirm Password
-            </label>
-            <input
-              type="confirm-password"
-              className="form-control"
-              id="exampleConfirm    Password1"
+            <TextArea
+                placeholder="Image URL"
+                value={item.image}
+                onChange={(e) => handleInputChange('image', e.target.value)}
+                style={{ marginBottom: '10px', width: '100%' }}
             />
-          </div>
-          <div className="mb-3 form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="exampleCheck1"
-              checked
+            <TextArea
+                placeholder="Rating"
+                value={item.rating_rate}
+                onChange={(e) => handleInputChange('rating_rate', e.target.value)}
+                style={{ marginBottom: '10px', width: '100%' }}
             />
-            <label className="form-check-label" for="exampleCheck1">
-              Login once registered
-            </label>
-          </div>
-          <button type="submit" className="btn btn-primary">
-            Submit
-          </button>
-        </form>
-      </div>
-    </div>
-  );
+            <TextArea
+                placeholder="Rating Count"
+                value={item.rating_count}
+                onChange={(e) => handleInputChange('rating_count', e.target.value)}
+                style={{ marginBottom: '10px', width: '100%' }}
+            />
+            <Button type="primary" onClick={handleAddItem} style={{ marginTop: '10px', width: '100%' }}>
+                Add Item
+            </Button>
+        </div>
+    );
 }
-
-export default Register;

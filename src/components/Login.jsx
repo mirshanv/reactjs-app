@@ -1,6 +1,30 @@
-import React from "react";
-
+import React, { useState } from "react";
+import axios from 'axios';
+import { Input, Button, message } from 'antd';
+import { useHistory } from "react-router-dom";
 function Login() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const history = useHistory();
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const apiUrl = 'http://localhost:3000/api/login';
+    const loginData = {
+      username: username,
+      password: password,
+    };
+
+    axios.post(apiUrl, loginData)
+      .then(response => {
+        localStorage.setItem("isLoggedIn", "true");
+        message.success("Login success");
+        history.push('/');
+      })
+      .catch(error => {
+        message.error(error.message);
+        console.error('Error:', error.response ? error.response.data : error.message);
+      });
+  };
   return (
     <div className="container">
       <form className="login-form">
@@ -13,7 +37,7 @@ function Login() {
             className="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
-            placeholder="indian@gmail.com"
+            onChange={(e) => setUsername(e.target.value)}
           />
           <div id="emailHelp" className="form-text">
             We'll never share your email with anyone else.
@@ -27,24 +51,14 @@ function Login() {
             type="password"
             className="form-control"
             id="exampleInputPassword1"
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <div className="mb-3 form-check">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            id="exampleCheck1"
-            checked
-          />
-          <label className="form-check-label" for="exampleCheck1">
-            Remember me
-          </label>
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Submit
-        </button>
+        <Button type="primary" onClick={handleLogin} style={{ marginTop: '10px', width: '100%' }}>
+          Log in
+        </Button>
       </form>
-    </div>
+    </div >
   );
 }
 
